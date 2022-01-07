@@ -4,7 +4,7 @@ from collections import OrderedDict
 from logging import Logger
 from typing import List
 from tqdm import tqdm
-from transformers import BertTokenizer
+from transformers import BertTokenizer 
 
 from spert import util
 from spert.entities import Dataset, EntityType, RelationType, Entity, Relation, Document
@@ -144,7 +144,6 @@ class JsonInputReader(BaseInputReader):
 
         # create document
         document = dataset.create_document(doc_tokens, entities, relations, doc_encoding)
-
         return document
 
     def _parse_entities(self, jentities, doc_tokens, dataset) -> List[Entity]:
@@ -153,7 +152,7 @@ class JsonInputReader(BaseInputReader):
         for entity_idx, jentity in enumerate(jentities):
             entity_type = self._entity_types[jentity['type']]
             start, end = jentity['start'], jentity['end']
-
+            
             # create entity mention
             tokens = doc_tokens[start:end]
             phrase = " ".join([t.phrase for t in tokens])
@@ -174,7 +173,6 @@ class JsonInputReader(BaseInputReader):
             # create relation
             head = entities[head_idx]
             tail = entities[tail_idx]
-
             reverse = int(tail.tokens[0].index) < int(head.tokens[0].index)
 
             # for symmetric relations: head occurs before tail in sentence
@@ -244,4 +242,5 @@ def _parse_tokens(jtokens, dataset, tokenizer):
 
     doc_encoding += [tokenizer.convert_tokens_to_ids('[SEP]')]
 
+                                                        cache_dir=args.cache_path)
     return doc_tokens, doc_encoding

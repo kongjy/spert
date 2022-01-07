@@ -34,7 +34,7 @@ class SpERTTrainer(BaseTrainer):
         self._tokenizer = BertTokenizer.from_pretrained(args.tokenizer_path,
                                                         do_lower_case=args.lowercase,
                                                         cache_dir=args.cache_path)
-
+        
     def train(self, train_path: str, valid_path: str, types_path: str, input_reader_cls: Type[BaseInputReader]):
         args = self._args
         train_label, valid_label = 'train', 'valid'
@@ -151,6 +151,8 @@ class SpERTTrainer(BaseTrainer):
         model_class = models.get_model(self._args.model_type)
 
         config = BertConfig.from_pretrained(self._args.model_path, cache_dir=self._args.cache_path)
+        print(type(config))
+        print('config:', config) 
         util.check_version(config, model_class, self._args.model_path)
 
         config.spert_version = model_class.VERSION
@@ -181,8 +183,9 @@ class SpERTTrainer(BaseTrainer):
 
         iteration = 0
         total = dataset.document_count // self._args.train_batch_size
-        for batch in tqdm(data_loader, total=total, desc='Train epoch %s' % epoch):
+        for i, batch in enumerate(tqdm(data_loader, total=total, desc='Train epoch %s' % epoch)):
             model.train()
+            #if batch['encodings'].shape[1] < 513: 
             batch = util.to_device(batch, self._device)
 
             # forward step

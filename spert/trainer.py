@@ -22,10 +22,16 @@ class BaseTrainer:
 
     def __init__(self, args: argparse.Namespace):
         self._args = args
+        print('the args are:', args)
         self._debug = self._args.debug
-
-        run_key = str(datetime.datetime.now()).replace(' ', '_')
-
+        mode = self._args.label.split('_')[1]
+        #run_key = str(datetime.datetime.now()).replace(' ', '_')
+        dt = str(datetime.datetime.now()).replace(' ', '_')
+        tok = args.tokenizer_path.replace('/', '_').replace('_', '')
+        if mode == 'train': 
+            run_key = '{}_tokenizer_{}_trainBatch_{}_evalBatch_{}_epochs_{}_lr_{}'.format(dt, tok, args.train_batch_size, args.eval_batch_size, args.epochs, args.lr)
+        if mode == 'eval': 
+            run_key = '{}_test'.format(dt)
         if hasattr(args, 'save_path'):
             self._save_path = os.path.join(self._args.save_path, self._args.label, run_key)
             util.create_directories_dir(self._save_path)
